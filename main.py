@@ -29,11 +29,17 @@ screen_height = 1000
 tile_size = 100
 TILE_STREET = '1'
 TILE_ROAD = '0'
+TILE_START = 'S'
+TILE_END = 'E'
 
 # view related info
 view_topleft = [0, 0]
 view_size = [10 * tile_size, 10 * tile_size]
 movement_distance = 1 * tile_size
+
+# states info
+states = ['SELECTING START', 'SELECTING END', 'SELECTED']
+current_state = 0
 
 ### functions
 
@@ -98,6 +104,14 @@ def apply_keyboard_interactions(keys):
   
   return new_view_topleft
 
+def get_coords():
+  clicked_coords = list(pygame.mouse.get_pos())
+  return clicked_coords
+
+def is_clicked():
+    if pygame.mouse.get_pressed() == (1,0,0):
+      return True
+
 def main():
   screen = pygame.display.set_mode((screen_width, screen_height))
   
@@ -106,13 +120,32 @@ def main():
 
     paint_view(screen)
 
-    for event in pygame.event.get():
+    events = pygame.event.get()
+
+    for event in events:
       if event.type == pygame.QUIT:
         running = False
-      
+
+    if events:
+
       keyboard_interactions = get_keyboard_interactions()
       global view_topleft
       view_topleft = apply_keyboard_interactions(keyboard_interactions)
+
+      if is_clicked():
+        x, y = get_coords()
+        city_x, city_y = x + view_topleft[0], y + view_topleft[1]
+        i, j = city_x//tile_size, city_y//tile_size
+
+        if city[j][i] == TILE_ROAD:
+          if states[current_state] == 'SELECTING START':
+            city[j][i] = TILE_START
+            current_state += 1
+            print('start selected')
+          elif states[current_state] == 'SELECTING END':
+            city[j][i] = TILE_END
+            current_state += 1
+            print('end selected')
 
 if __name__ == '__main__':
   main()

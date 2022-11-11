@@ -18,6 +18,9 @@ city = [['1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'
       ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
       ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0']]
 
+city_height = len(city)
+city_width = len(city[0]) if city else 0
+
 # screen dimensions
 screen_width = 1000
 screen_height = 1000
@@ -28,9 +31,9 @@ TILE_STREET = '1'
 TILE_ROAD = '0'
 
 # view related info
-view_topleft = (0, 0)
-view_size = (10 * tile_size, 10 * tile_size)
-
+view_topleft = [0, 0]
+view_size = [10 * tile_size, 10 * tile_size]
+movement_distance = 1 * tile_size
 
 ### functions
 
@@ -42,21 +45,65 @@ def paint_view(screen):
       x = view_topleft[0] + i * tile_size 
       y = view_topleft[1] + j * tile_size
 
-      print(x, y)
-
       if (city[j][i] == TILE_STREET):
-        print('street')
-        screen.blit(resources.street_img, (x, y))
+        screen.blit(resources.street_img, (x, y), (0, 0, 100, 100))
       elif (city[j][i] == TILE_ROAD):
-        print('road')
-        screen.blit(resources.road_img, (x, y))
+        screen.blit(resources.road_img, (x, y), (0, 0, 100, 100))
       
-  
   pygame.display.flip()
+
+def get_keyboard_interactions():
+  return pygame.key.get_pressed()
+
+def keyboard_interaction_legal(keys):
+  if not pygame.KEYDOWN:
+    return False
+  if keys[pygame.K_LEFT]:
+    if view_topleft[0] - movement_distance < 0:
+      return False
+    else: 
+      return True
+  elif keys[pygame.K_RIGHT]:
+    if view_topleft[0] + view_size[0] + movement_distance >= city_width * tile_size:
+      return False
+    else:
+      return True
+  elif keys[pygame.K_UP]:
+    if view_topleft[1] - movement_distance < 0:
+      return False
+    else:
+      return True
+  elif keys[pygame.K_DOWN]:
+    if view_topleft[1] + view_size[1] + movement_distance >= city_height * tile_size:
+      return False
+    else:
+      return True
+  return False
+
+def apply_keyboard_interactions(keys):
+
+  if not keyboard_interaction_legal(keys):
+    return view_topleft
   
+  new_view_topleft = view_topleft
+  
+  if keys[pygame.K_LEFT]:
+    new_view_topleft[0] -= movement_distance
+  elif keys[pygame.K_RIGHT]:
+    new_view_topleft[0] += movement_distance
+  elif keys[pygame.K_UP]:
+    new_view_topleft[1] -= movement_distance
+  elif keys[pygame.K_DOWN]:
+    new_view_topleft[1] += movement_distance
+  
+  return new_view_topleft
 
 def main():
   screen = pygame.display.set_mode((screen_width, screen_height))
+
+  # remove
+  print(city_width)
+  print(city_height)
   
   running = True
   while running:
@@ -66,6 +113,12 @@ def main():
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
         running = False
+      
+      keyboard_interactions = get_keyboard_interactions()
+      global view_topleft
+      #print(view_topleft)
+      view_topleft = apply_keyboard_interactions(keyboard_interactions)
+      print(view_topleft)
   
 
 if __name__ == '__main__':

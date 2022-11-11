@@ -45,8 +45,6 @@ def paint_view(screen):
       x = i * tile_size - view_topleft[0]
       y = j * tile_size - view_topleft[1]
 
-      print(i, j, x, y)
-
       if (city[j][i] == TILE_STREET):
         screen.blit(resources.street_img, (x, y))
       elif (city[j][i] == TILE_ROAD):
@@ -114,10 +112,7 @@ def main():
       
       keyboard_interactions = get_keyboard_interactions()
       global view_topleft
-      #print(view_topleft)
       view_topleft = apply_keyboard_interactions(keyboard_interactions)
-      print(view_topleft)
-  
 
 if __name__ == '__main__':
   main()

@@ -39,16 +39,18 @@ movement_distance = 1 * tile_size
 
 def paint_view(screen):
 
-  for j in range(view_topleft[0]//tile_size, (view_topleft[0]+view_size[0])//tile_size):
-    for i in range(view_topleft[1]//tile_size, (view_topleft[1]+view_size[1])//tile_size):
+  for j in range(view_topleft[1]//tile_size, (view_topleft[1]+view_size[1])//tile_size):
+    for i in range(view_topleft[0]//tile_size, (view_topleft[0]+view_size[0])//tile_size):
 
-      x = view_topleft[0] + i * tile_size 
-      y = view_topleft[1] + j * tile_size
+      x = i * tile_size - view_topleft[0]
+      y = j * tile_size - view_topleft[1]
+
+      print(i, j, x, y)
 
       if (city[j][i] == TILE_STREET):
-        screen.blit(resources.street_img, (x, y), (0, 0, 100, 100))
+        screen.blit(resources.street_img, (x, y))
       elif (city[j][i] == TILE_ROAD):
-        screen.blit(resources.road_img, (x, y), (0, 0, 100, 100))
+        screen.blit(resources.road_img, (x, y))
       
   pygame.display.flip()
 
@@ -100,10 +102,6 @@ def apply_keyboard_interactions(keys):
 
 def main():
   screen = pygame.display.set_mode((screen_width, screen_height))
-
-  # remove
-  print(city_width)
-  print(city_height)
   
   running = True
   while running:

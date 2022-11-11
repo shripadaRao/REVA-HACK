@@ -3,8 +3,8 @@ import time
 from colorama import init
 from colorama import Fore, Back, Style
 
-wall = 'w'
-cell = 'c'
+wall = '0'
+cell = '1'
 unvisited = 'u'
 height = 11
 width = 27
@@ -13,18 +13,18 @@ maze = []
 # Find number of surrounding cells
 def surroundingCells(rand_wall):
     s_cells = 0
-    if (maze[rand_wall[0]-1][rand_wall[1]] == 'c'):
+    if (maze[rand_wall[0]-1][rand_wall[1]] == '1'):
         s_cells += 1
-    if (maze[rand_wall[0]+1][rand_wall[1]] == 'c'):
+    if (maze[rand_wall[0]+1][rand_wall[1]] == '1'):
         s_cells += 1
-    if (maze[rand_wall[0]][rand_wall[1]-1] == 'c'):
+    if (maze[rand_wall[0]][rand_wall[1]-1] == '1'):
         s_cells +=1
-    if (maze[rand_wall[0]][rand_wall[1]+1] == 'c'):
+    if (maze[rand_wall[0]][rand_wall[1]+1] == '1'):
         s_cells += 1
 
     return s_cells
 
-def final():
+def generate_city(height, width):
     # Initialize colorama
     init()
     # Denote all cells as unvisited
@@ -54,44 +54,44 @@ def final():
     walls.append([starting_height + 1, starting_width])
 
     # Denote walls in maze
-    maze[starting_height-1][starting_width] = 'w'
-    maze[starting_height][starting_width - 1] = 'w'
-    maze[starting_height][starting_width + 1] = 'w'
-    maze[starting_height + 1][starting_width] = 'w'
+    maze[starting_height-1][starting_width] = '0'
+    maze[starting_height][starting_width - 1] = '0'
+    maze[starting_height][starting_width + 1] = '0'
+    maze[starting_height + 1][starting_width] = '0'
     while (walls):
         # Pick a random wall
         rand_wall = walls[int(random.random()*len(walls))-1]
 
         # Check if it is a left wall
         if (rand_wall[1] != 0):
-            if (maze[rand_wall[0]][rand_wall[1]-1] == 'u' and maze[rand_wall[0]][rand_wall[1]+1] == 'c'):
+            if (maze[rand_wall[0]][rand_wall[1]-1] == 'u' and maze[rand_wall[0]][rand_wall[1]+1] == '1'):
                 # Find the number of surrounding cells
                 s_cells = surroundingCells(rand_wall)
 
                 if (s_cells < 2):
                     # Denote the new path
-                    maze[rand_wall[0]][rand_wall[1]] = 'c'
+                    maze[rand_wall[0]][rand_wall[1]] = '1'
 
                     # Mark the new walls
                     # Upper cell
                     if (rand_wall[0] != 0):
-                        if (maze[rand_wall[0]-1][rand_wall[1]] != 'c'):
-                            maze[rand_wall[0]-1][rand_wall[1]] = 'w'
+                        if (maze[rand_wall[0]-1][rand_wall[1]] != '1'):
+                            maze[rand_wall[0]-1][rand_wall[1]] = '0'
                         if ([rand_wall[0]-1, rand_wall[1]] not in walls):
                             walls.append([rand_wall[0]-1, rand_wall[1]])
 
 
                     # Bottom cell
                     if (rand_wall[0] != height-1):
-                        if (maze[rand_wall[0]+1][rand_wall[1]] != 'c'):
-                            maze[rand_wall[0]+1][rand_wall[1]] = 'w'
+                        if (maze[rand_wall[0]+1][rand_wall[1]] != '1'):
+                            maze[rand_wall[0]+1][rand_wall[1]] = '0'
                         if ([rand_wall[0]+1, rand_wall[1]] not in walls):
                             walls.append([rand_wall[0]+1, rand_wall[1]])
 
                     # Leftmost cell
                     if (rand_wall[1] != 0):	
-                        if (maze[rand_wall[0]][rand_wall[1]-1] != 'c'):
-                            maze[rand_wall[0]][rand_wall[1]-1] = 'w'
+                        if (maze[rand_wall[0]][rand_wall[1]-1] != '1'):
+                            maze[rand_wall[0]][rand_wall[1]-1] = '0'
                         if ([rand_wall[0], rand_wall[1]-1] not in walls):
                             walls.append([rand_wall[0], rand_wall[1]-1])
                 
@@ -105,32 +105,32 @@ def final():
 
         # Check if it is an upper wall
         if (rand_wall[0] != 0):
-            if (maze[rand_wall[0]-1][rand_wall[1]] == 'u' and maze[rand_wall[0]+1][rand_wall[1]] == 'c'):
+            if (maze[rand_wall[0]-1][rand_wall[1]] == 'u' and maze[rand_wall[0]+1][rand_wall[1]] == '1'):
 
                 s_cells = surroundingCells(rand_wall)
                 if (s_cells < 2):
                     # Denote the new path
-                    maze[rand_wall[0]][rand_wall[1]] = 'c'
+                    maze[rand_wall[0]][rand_wall[1]] = '1'
 
                     # Mark the new walls
                     # Upper cell
                     if (rand_wall[0] != 0):
-                        if (maze[rand_wall[0]-1][rand_wall[1]] != 'c'):
-                            maze[rand_wall[0]-1][rand_wall[1]] = 'w'
+                        if (maze[rand_wall[0]-1][rand_wall[1]] != '1'):
+                            maze[rand_wall[0]-1][rand_wall[1]] = '0'
                         if ([rand_wall[0]-1, rand_wall[1]] not in walls):
                             walls.append([rand_wall[0]-1, rand_wall[1]])
 
                     # Leftmost cell
                     if (rand_wall[1] != 0):
-                        if (maze[rand_wall[0]][rand_wall[1]-1] != 'c'):
-                            maze[rand_wall[0]][rand_wall[1]-1] = 'w'
+                        if (maze[rand_wall[0]][rand_wall[1]-1] != '1'):
+                            maze[rand_wall[0]][rand_wall[1]-1] = '0'
                         if ([rand_wall[0], rand_wall[1]-1] not in walls):
                             walls.append([rand_wall[0], rand_wall[1]-1])
 
                     # Rightmost cell
                     if (rand_wall[1] != width-1):
-                        if (maze[rand_wall[0]][rand_wall[1]+1] != 'c'):
-                            maze[rand_wall[0]][rand_wall[1]+1] = 'w'
+                        if (maze[rand_wall[0]][rand_wall[1]+1] != '1'):
+                            maze[rand_wall[0]][rand_wall[1]+1] = '0'
                         if ([rand_wall[0], rand_wall[1]+1] not in walls):
                             walls.append([rand_wall[0], rand_wall[1]+1])
 
@@ -143,27 +143,27 @@ def final():
 
         # Check the bottom wall
         if (rand_wall[0] != height-1):
-            if (maze[rand_wall[0]+1][rand_wall[1]] == 'u' and maze[rand_wall[0]-1][rand_wall[1]] == 'c'):
+            if (maze[rand_wall[0]+1][rand_wall[1]] == 'u' and maze[rand_wall[0]-1][rand_wall[1]] == '1'):
 
                 s_cells = surroundingCells(rand_wall)
                 if (s_cells < 2):
                     # Denote the new path
-                    maze[rand_wall[0]][rand_wall[1]] = 'c'
+                    maze[rand_wall[0]][rand_wall[1]] = '1'
 
                     # Mark the new walls
                     if (rand_wall[0] != height-1):
-                        if (maze[rand_wall[0]+1][rand_wall[1]] != 'c'):
-                            maze[rand_wall[0]+1][rand_wall[1]] = 'w'
+                        if (maze[rand_wall[0]+1][rand_wall[1]] != '1'):
+                            maze[rand_wall[0]+1][rand_wall[1]] = '0'
                         if ([rand_wall[0]+1, rand_wall[1]] not in walls):
                             walls.append([rand_wall[0]+1, rand_wall[1]])
                     if (rand_wall[1] != 0):
-                        if (maze[rand_wall[0]][rand_wall[1]-1] != 'c'):
-                            maze[rand_wall[0]][rand_wall[1]-1] = 'w'
+                        if (maze[rand_wall[0]][rand_wall[1]-1] != '1'):
+                            maze[rand_wall[0]][rand_wall[1]-1] = '0'
                         if ([rand_wall[0], rand_wall[1]-1] not in walls):
                             walls.append([rand_wall[0], rand_wall[1]-1])
                     if (rand_wall[1] != width-1):
-                        if (maze[rand_wall[0]][rand_wall[1]+1] != 'c'):
-                            maze[rand_wall[0]][rand_wall[1]+1] = 'w'
+                        if (maze[rand_wall[0]][rand_wall[1]+1] != '1'):
+                            maze[rand_wall[0]][rand_wall[1]+1] = '0'
                         if ([rand_wall[0], rand_wall[1]+1] not in walls):
                             walls.append([rand_wall[0], rand_wall[1]+1])
 
@@ -177,27 +177,27 @@ def final():
 
         # Check the right wall
         if (rand_wall[1] != width-1):
-            if (maze[rand_wall[0]][rand_wall[1]+1] == 'u' and maze[rand_wall[0]][rand_wall[1]-1] == 'c'):
+            if (maze[rand_wall[0]][rand_wall[1]+1] == 'u' and maze[rand_wall[0]][rand_wall[1]-1] == '1'):
 
                 s_cells = surroundingCells(rand_wall)
                 if (s_cells < 2):
                     # Denote the new path
-                    maze[rand_wall[0]][rand_wall[1]] = 'c'
+                    maze[rand_wall[0]][rand_wall[1]] = '1'
 
                     # Mark the new walls
                     if (rand_wall[1] != width-1):
-                        if (maze[rand_wall[0]][rand_wall[1]+1] != 'c'):
-                            maze[rand_wall[0]][rand_wall[1]+1] = 'w'
+                        if (maze[rand_wall[0]][rand_wall[1]+1] != '1'):
+                            maze[rand_wall[0]][rand_wall[1]+1] = '0'
                         if ([rand_wall[0], rand_wall[1]+1] not in walls):
                             walls.append([rand_wall[0], rand_wall[1]+1])
                     if (rand_wall[0] != height-1):
-                        if (maze[rand_wall[0]+1][rand_wall[1]] != 'c'):
-                            maze[rand_wall[0]+1][rand_wall[1]] = 'w'
+                        if (maze[rand_wall[0]+1][rand_wall[1]] != '1'):
+                            maze[rand_wall[0]+1][rand_wall[1]] = '0'
                         if ([rand_wall[0]+1, rand_wall[1]] not in walls):
                             walls.append([rand_wall[0]+1, rand_wall[1]])
                     if (rand_wall[0] != 0):	
-                        if (maze[rand_wall[0]-1][rand_wall[1]] != 'c'):
-                            maze[rand_wall[0]-1][rand_wall[1]] = 'w'
+                        if (maze[rand_wall[0]-1][rand_wall[1]] != '1'):
+                            maze[rand_wall[0]-1][rand_wall[1]] = '0'
                         if ([rand_wall[0]-1, rand_wall[1]] not in walls):
                             walls.append([rand_wall[0]-1, rand_wall[1]])
 
@@ -217,15 +217,17 @@ def final():
     for i in range(0, height):
         for j in range(0, width):
             if (maze[i][j] == 'u'):
-                maze[i][j] = 'w'
+                maze[i][j] = '0'
 
     for i in range(1, height-1):
         for j in range(1, width-1):
             count = 0
-            if maze[i][j] == 'w':
+            if maze[i][j] == '0':
                 count = 0
-                if maze[i-1][j] == 'c' and maze[i+1][j] == 'c' and  maze[i][j+1] == 'w' and maze[i][j-1] == 'w':
-                    maze[i][j] = 'c'
-                elif maze[i-1][j] == 'w' and maze[i+1][j] == 'w' and maze[i][j+1] == 'c' and maze[i][j-1] == 'c':
-                    maze[i][j] = 'c'
+                if maze[i-1][j] == '1' and maze[i+1][j] == '1' and  maze[i][j+1] == '0' and maze[i][j-1] == '0':
+                    maze[i][j] = '1'
+                elif maze[i-1][j] == '0' and maze[i+1][j] == '0' and maze[i][j+1] == '1' and maze[i][j-1] == '1':
+                    maze[i][j] = '1'
     return maze
+
+# print(generate_city(100,100))

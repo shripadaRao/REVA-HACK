@@ -7,6 +7,10 @@ tiles['start'] = pygame.image.load('assets/gray-tile.jpg')
 tiles['end'] = pygame.image.load('assets/gray-tile.jpg')
 
 # road images
+tiles['road-B'] = pygame.image.load('assets/roads/B.png')
+tiles['road-L'] = pygame.image.load('assets/roads/L.png')
+tiles['road-R'] = pygame.image.load('assets/roads/R.png')
+tiles['road-U'] = pygame.image.load('assets/roads/U.png')
 tiles['road-LB'] = pygame.image.load('assets/roads/LB.png')
 tiles['road-LR'] = pygame.image.load('assets/roads/LR.png')
 tiles['road-LRB'] = pygame.image.load('assets/roads/LRB.png')

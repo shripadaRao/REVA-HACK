@@ -41,10 +41,11 @@ def paint_view(screen):
       x = i * tile_size - view_topleft[0]
       y = j * tile_size - view_topleft[1]
 
-      if (city[j][i] == TILE_STREET):
+      if (city[j][i] == TILE_ROAD):
+        screen.blit(resources.get_road_img(city, j, i), (x, y))
+
+      elif (city[j][i] == TILE_STREET):
         screen.blit(resources.tiles['street'], (x, y))
-      elif (city[j][i] == TILE_ROAD):
-        screen.blit(resources.tiles['road'], (x, y))
       elif (city[j][i] == TILE_START):
         screen.blit(resources.tiles['start'], (x, y))
       elif (city[j][i] == TILE_END):

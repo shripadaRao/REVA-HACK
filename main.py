@@ -1,22 +1,11 @@
 ### imports
 import pygame
 import resources
+from city_generation import generate_city
 
 ### global variables
 
-city = [['1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-      ['0','1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-      ['0','1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-      ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-      ['0','0','0','0','0','0','1','1','1','1','1','1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-      ['1','1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','1','1','0','0','0','0','0','0','0','0','0'],
-      ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','0','0','0','1','1','1','1','1','0'],
-      ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','0','0','0','1','1','1','1','1','0'],
-      ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','1','1','1','0','0'],
-      ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','1','1','0','0','0'],
-      ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','1','0','0','0'],
-      ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-      ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0']]
+city = generate_city(20, 20)
 
 city_height = len(city)
 city_width = len(city[0]) if city else 0
@@ -27,8 +16,8 @@ screen_height = 1000
 
 # tile info
 tile_size = 100
-TILE_STREET = '1'
-TILE_ROAD = '0'
+TILE_STREET = 'S'
+TILE_ROAD = 'R'
 TILE_START = 'S'
 TILE_END = 'E'
 
@@ -55,6 +44,10 @@ def paint_view(screen):
         screen.blit(resources.street_img, (x, y))
       elif (city[j][i] == TILE_ROAD):
         screen.blit(resources.road_img, (x, y))
+      elif (city[j][i] == TILE_START):
+        screen.blit(resources.start_img, (x, y))
+      elif (city[j][i] == TILE_END):
+        screen.blit(resources.end_img, (x, y))
       
   pygame.display.flip()
 
@@ -70,7 +63,7 @@ def keyboard_interaction_legal(keys):
     else: 
       return True
   elif keys[pygame.K_RIGHT]:
-    if view_topleft[0] + view_size[0] + movement_distance >= city_width * tile_size:
+    if view_topleft[0] + view_size[0] - 1 + movement_distance >= city_width * tile_size:
       return False
     else:
       return True
@@ -80,7 +73,7 @@ def keyboard_interaction_legal(keys):
     else:
       return True
   elif keys[pygame.K_DOWN]:
-    if view_topleft[1] + view_size[1] + movement_distance >= city_height * tile_size:
+    if view_topleft[1] + view_size[1] - 1 + movement_distance >= city_height * tile_size:
       return False
     else:
       return True
@@ -137,6 +130,7 @@ def main():
         city_x, city_y = x + view_topleft[0], y + view_topleft[1]
         i, j = city_x//tile_size, city_y//tile_size
 
+        global current_state
         if city[j][i] == TILE_ROAD:
           if states[current_state] == 'SELECTING START':
             city[j][i] = TILE_START

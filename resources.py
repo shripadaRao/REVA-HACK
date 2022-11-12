@@ -2,7 +2,7 @@ import pygame
 
 tiles = {}
 
-tiles['street'] = pygame.image.load('assets/white-tile.jpg')
+tiles['street'] = pygame.image.load('assets/green-tile.jpg')
 tiles['start'] = pygame.image.load('assets/gray-tile.jpg')
 tiles['end'] = pygame.image.load('assets/gray-tile.jpg')
 
@@ -23,44 +23,53 @@ tiles['road-UB'] = pygame.image.load('assets/roads/UB.png')
 tiles['road-UR'] = pygame.image.load('assets/roads/UR.png')
 tiles['road-URB'] = pygame.image.load('assets/roads/URB.png')
 
+
+
+
+
+
+
 def change_tile_size(new_tile_size):
   for key in tiles:
     tiles[key] = pygame.transform.scale(tiles[key], (new_tile_size, new_tile_size))
 
-def get_road_img(city, j,i):
+def get_road_img(city, j, i):
+  city_height = len(city)
+  city_width = 0 if not city else len(city[0])
 
-  if city[i-1][j]=='ROAD' and city[i][j-1]=='ROAD' and city[i+1][j]=='ROAD' and city[i][j+1]=='ROAD':
+  road = ['ROAD', 'START', 'END']
+
+  if city[j][i-1] in road and city[j-1][i] in road and city[j][i+1] in road and city[j+1][i] in road:
     return tiles['road-LURB']
-  if city[i][j-1]=='ROAD' and city[i+1][j]=='ROAD' and city[i][j+1]=='ROAD':
+  if city[j-1][i] in road and city[j][i+1] in road and city[j+1][i] in road:
     return tiles['road-URB']
-  if city[i-1][j]=='ROAD' and city[i][j-1]=='ROAD' and city[i+1][j]=='ROAD':
+  if city[j][i-1] in road and city[j-1][i] in road and city[j][i+1] in road:
     return tiles['road-LUR']
-  if city[i-1][j]=='ROAD' and city[i][j-1]=='ROAD' and city[i][j+1]=='ROAD':
+  if city[j][i-1] in road and city[j-1][i] in road and city[j+1][i] in road:
     return tiles['road-LUB']
-  if city[i-1][j]=='ROAD' and city[i+1][j]=='ROAD' and city[i][j+1]=='ROAD':
+  if city[j][i-1] in road and city[j][i+1] in road and city[j+1][i] in road:
     return tiles['road-LRB']
   
-  if city[i-1][j]=='ROAD' and city[i][j+1]=='ROAD':
+  if city[j][i-1] in road and city[j+1][i] in road:
     return tiles['road-LB']
-  if city[i-1][j]=="ROAD" and city[i+1][j]=='ROAD':
+  if city[j][i-1] in road and city[j][i+1] in road:
     return tiles['road-LR']
-  if city[i-1][j]=='ROAD' and city[i][j-1]=='ROAD':
+  if city[j][i-1] in road and city[j-1][i] in road:
     return tiles['road-LU']
-  if city[i+1][j]=='ROAD' and city[i][j+1]=='ROAD':
+  if city[j][i+1] in road and city[j+1][i] in road:
     return tiles['road-RB']
-  if city[i][j+1]=='ROAD' and city[i][j-1]=='ROAD':
+  if city[j-1][i] in road and city[j+1][i] in road:
     return tiles['road-UB']
-  if city[i][j+1] =='ROAD' and city[i+1][j]=='ROAD':
+  if city[j-1][i] in road and city[j][i+1] in road:
     return tiles['road-UR']
-  if city[i-1][j]=='ROAD' and city[i][j+1]=='ROAD':
+  if city[j][i-1] in road and city[j+1][i] in road:
     return tiles['road-LB']
   
-  if city[i][j+1]=="ROAD":
+  if city[j+1][i] in road:
     return tiles['road-B']
-  if city[i][j-1]=="ROAD":
+  if city[j-1][i] in road:
     return tiles['road-U']
-  if city[i+1][j]=="ROAD":
+  if city[j][i+1] in road:
     return tiles['road-R']
-  if city[i-1][j]=="ROAD":
+  if city[j][i-1] in road:
     return tiles['road-L']
-

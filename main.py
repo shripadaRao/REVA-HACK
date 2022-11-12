@@ -3,32 +3,33 @@ import pygame
 import resources
 from city_generation import generate_city
 
-### global variables
-
-city = generate_city(20, 20)
-
-city_height = len(city)
-city_width = len(city[0]) if city else 0
-
-# screen dimensions
-screen_width = 1000
-screen_height = 1000
 
 # tile info
-tile_size = 100
-TILE_STREET = 'S'
-TILE_ROAD = 'R'
-TILE_START = 'S'
-TILE_END = 'E'
+tile_size = 50
+resources.change_tile_size(tile_size)
+TILE_STREET = 'STREET'
+TILE_ROAD = 'ROAD'
+TILE_START = 'START'
+TILE_END = 'END'
 
 # view related info
 view_topleft = [0, 0]
 view_size = [10 * tile_size, 10 * tile_size]
 movement_distance = 1 * tile_size
 
+# screen dimensions
+screen_width = view_size[0]
+screen_height = view_size[1]
+
 # states info
 states = ['SELECTING START', 'SELECTING END', 'SELECTED']
 current_state = 0
+
+
+city_height = int(input('City Height: '))
+city_width = int(input('City Width: '))
+city = generate_city(city_height, city_width)
+
 
 ### functions
 
@@ -41,13 +42,13 @@ def paint_view(screen):
       y = j * tile_size - view_topleft[1]
 
       if (city[j][i] == TILE_STREET):
-        screen.blit(resources.street_img, (x, y))
+        screen.blit(resources.tiles['street'], (x, y))
       elif (city[j][i] == TILE_ROAD):
-        screen.blit(resources.road_img, (x, y))
+        screen.blit(resources.tiles['road'], (x, y))
       elif (city[j][i] == TILE_START):
-        screen.blit(resources.start_img, (x, y))
+        screen.blit(resources.tiles['start'], (x, y))
       elif (city[j][i] == TILE_END):
-        screen.blit(resources.end_img, (x, y))
+        screen.blit(resources.tiles['end'], (x, y))
       
   pygame.display.flip()
 

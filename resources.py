@@ -27,10 +27,40 @@ def change_tile_size(new_tile_size):
   for key in tiles:
     tiles[key] = pygame.transform.scale(tiles[key], (new_tile_size, new_tile_size))
 
-def get_road_img(city, j, i):
-  city_height = len(city)
-  city_width = 0 if not city else len(city[0])
+def get_road_img(city, j,i):
 
-  if True:
+  if city[i-1][j]=='ROAD' and city[i][j-1]=='ROAD' and city[i+1][j]=='ROAD' and city[i][j+1]=='ROAD':
+    return tiles['road-LURB']
+  if city[i][j-1]=='ROAD' and city[i+1][j]=='ROAD' and city[i][j+1]=='ROAD':
+    return tiles['road-URB']
+  if city[i-1][j]=='ROAD' and city[i][j-1]=='ROAD' and city[i+1][j]=='ROAD':
+    return tiles['road-LUR']
+  if city[i-1][j]=='ROAD' and city[i][j-1]=='ROAD' and city[i][j+1]=='ROAD':
+    return tiles['road-LUB']
+  if city[i-1][j]=='ROAD' and city[i+1][j]=='ROAD' and city[i][j+1]=='ROAD':
+    return tiles['road-LRB']
+  
+  if city[i-1][j]=='ROAD' and city[i][j+1]=='ROAD':
     return tiles['road-LB']
-  pass
+  if city[i-1][j]=="ROAD" and city[i+1][j]=='ROAD':
+    return tiles['road-LR']
+  if city[i-1][j]=='ROAD' and city[i][j-1]=='ROAD':
+    return tiles['road-LU']
+  if city[i+1][j]=='ROAD' and city[i][j+1]=='ROAD':
+    return tiles['road-RB']
+  if city[i][j+1]=='ROAD' and city[i][j-1]=='ROAD':
+    return tiles['road-UB']
+  if city[i][j+1] =='ROAD' and city[i+1][j]=='ROAD':
+    return tiles['road-UR']
+  if city[i-1][j]=='ROAD' and city[i][j+1]=='ROAD':
+    return tiles['road-LB']
+  
+  if city[i][j+1]=="ROAD":
+    return tiles['road-B']
+  if city[i][j-1]=="ROAD":
+    return tiles['road-U']
+  if city[i+1][j]=="ROAD":
+    return tiles['road-R']
+  if city[i-1][j]=="ROAD":
+    return tiles['road-L']
+

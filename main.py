@@ -6,7 +6,6 @@ from city_generation import generate_city
 
 # tile info
 tile_size = 50
-resources.change_tile_size(tile_size)
 TILE_STREET = 'STREET'
 TILE_ROAD = 'ROAD'
 TILE_START = 'START'
@@ -41,20 +40,21 @@ def paint_view(screen):
       x = i * tile_size - view_topleft[0]
       y = j * tile_size - view_topleft[1]
 
-      if (city[j][i] == TILE_ROAD):
+      if (city[j][i] in [TILE_ROAD, TILE_START, TILE_END]):
         screen.blit(resources.get_road_img(city, j, i), (x, y))
-
+      
       elif (city[j][i] == TILE_STREET):
         screen.blit(resources.tiles['street'], (x, y))
-      elif (city[j][i] == TILE_START):
-        screen.blit(resources.tiles['start'], (x, y))
-      elif (city[j][i] == TILE_END):
-        screen.blit(resources.tiles['end'], (x, y))
+
+      if (city[j][i] in [TILE_START, TILE_END]):
+        print('start or end')
+        screen.blit(resources.tiles['pin'], (x, y))
       
   pygame.display.flip()
 
 def main():
   screen = pygame.display.set_mode((screen_width, screen_height))
+  resources.load_assets(tile_size)
   
   running = True
   while running:

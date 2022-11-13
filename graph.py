@@ -3,12 +3,12 @@ import random
 wall = 'STREET'
 cell = 'ROAD'
 unvisited = 'u'
-height = 11
-width = 27
-maze = []
+# height = 11
+# width = 27
+# maze = []
 
 # Find number of surrounding cells
-def surroundingCells(rand_wall):
+def surroundingCells(rand_wall, maze):
     s_cells = 0
     if (maze[rand_wall[0]-1][rand_wall[1]] == 'ROAD'):
         s_cells += 1
@@ -22,6 +22,7 @@ def surroundingCells(rand_wall):
     return s_cells
 
 def generate_city(height, width):
+    maze = []
     # Denote all cells as unvisited
     for i in range(0, height):
         line = []
@@ -61,7 +62,7 @@ def generate_city(height, width):
         if (rand_wall[1] != 0):
             if (maze[rand_wall[0]][rand_wall[1]-1] == 'u' and maze[rand_wall[0]][rand_wall[1]+1] == 'ROAD'):
                 # Find the number of surrounding cells
-                s_cells = surroundingCells(rand_wall)
+                s_cells = surroundingCells(rand_wall, maze)
 
                 if (s_cells < 2):
                     # Denote the new path
@@ -102,7 +103,7 @@ def generate_city(height, width):
         if (rand_wall[0] != 0):
             if (maze[rand_wall[0]-1][rand_wall[1]] == 'u' and maze[rand_wall[0]+1][rand_wall[1]] == 'ROAD'):
 
-                s_cells = surroundingCells(rand_wall)
+                s_cells = surroundingCells(rand_wall, maze)
                 if (s_cells < 2):
                     # Denote the new path
                     maze[rand_wall[0]][rand_wall[1]] = 'ROAD'
@@ -140,7 +141,7 @@ def generate_city(height, width):
         if (rand_wall[0] != height-1):
             if (maze[rand_wall[0]+1][rand_wall[1]] == 'u' and maze[rand_wall[0]-1][rand_wall[1]] == 'ROAD'):
 
-                s_cells = surroundingCells(rand_wall)
+                s_cells = surroundingCells(rand_wall, maze)
                 if (s_cells < 2):
                     # Denote the new path
                     maze[rand_wall[0]][rand_wall[1]] = 'ROAD'
@@ -174,7 +175,7 @@ def generate_city(height, width):
         if (rand_wall[1] != width-1):
             if (maze[rand_wall[0]][rand_wall[1]+1] == 'u' and maze[rand_wall[0]][rand_wall[1]-1] == 'ROAD'):
 
-                s_cells = surroundingCells(rand_wall)
+                s_cells = surroundingCells(rand_wall, maze)
                 if (s_cells < 2):
                     # Denote the new path
                     maze[rand_wall[0]][rand_wall[1]] = 'ROAD'
@@ -235,8 +236,10 @@ intersections = []
 adj_list = {}
  
 def find_intersections(maze):
-    # intersections.append(entry)
-    # intersections.append(exit)
+
+    height = len(maze)
+    width = 0 if not maze else len(maze[0])
+
     for i in range(1, height-1):
         for j in range(1, width-1):
             count = l = r = u = d = 0
@@ -267,6 +270,8 @@ def find_intersections(maze):
     return intersections
  
 def adj_list_m(intersections, maze):
+    height = len(maze)
+    width = 0 if not maze else len(maze[0])
     for intersection in intersections:
         adj_list[intersection] = []
 
@@ -430,47 +435,8 @@ def init_graph(adj_list, intersections):
 
 
 
-# def get_route_coordinates(maze, start, end):
-#     route_coords = []
-#     intersections = find_intersections (start, end, maze)
-#     adj_list = adj_list_m (intersections, maze)
-#     preds = dijkstra(adj_list, start)
-#     temp1 = end
-#     while preds[temp1] != start:
-#         route_coords.append(temp1)
-#         temp2 = preds[temp1]
-#         if (temp1[0] == temp2[0]):
-#             distance = temp1[1] - temp2[1]
-#             if distance < 0: #moving right
-#                 for j in range (temp1[1], temp2[1]+1):
-#                     route_coords.append((temp1[0], j))
-#             else: #moving left
-#                 for j in range (temp1[1], temp2[1]-1, -1):
-#                     route_coords.append((temp1[0], j))
-#         else:
-#             distance = temp1[0] - temp2[0]
-#             if distance < 0: #moving up
-#                 for i in range (temp1[0], temp2[0]-1, -1):
-#                     route_coords.append((i, temp1[1]))
-#             else:
-#                 for i in range (temp1[0], temp2[0]+1):
-#                     route_coords.append((i, temp1[1]))
-#         temp1 = temp2
-#     route_coords.append (start)
-#     return route_coords
 
 
-# START = (1,1)
-# END = (20,20)
-
-# maze = generate_city(40, 40)
-# intersections = find_intersections(START, END, maze)
-# print(adj_list_m(intersections, maze))
-# #print (dijkstra (adj_list_m(intersections, maze), intersections[0]))
-# print()
-# route = get_route_coordinates(maze,START,END)
-# route.reverse()
-# print('route:   ',route)
 
 
 
@@ -486,8 +452,6 @@ def add_start_end(adj_list, start, end):
     added_start = False
     finding_start = True
     for first_node in adj_list:
-        if not finding_start:
-            break
         for second_node, distance, safety_data in adj_list[first_node]:
             if start == first_node or start == second_node:
                 finding_start = False
@@ -512,7 +476,9 @@ def add_start_end(adj_list, start, end):
 
                 finding_start = False
                 added_start = True
-                break
+                break     
+        if not finding_start:
+            break
 
     if added_start:
         adj_list[first_node].remove(first_list_remove)
@@ -529,8 +495,6 @@ def add_start_end(adj_list, start, end):
     finding_end = True
     added_end = False
     for first_node in adj_list:
-        if not finding_end:
-            break
         for second_node, distance, safety_data in adj_list[first_node]:
             if end == first_node or end == second_node:
                 finding_end = False
@@ -555,6 +519,8 @@ def add_start_end(adj_list, start, end):
                 finding_end = False
                 added_end = True
                 break
+        if not finding_end:
+            break
     if added_end:
         adj_list[first_node].remove(first_list_remove)
         adj_list[second_node].remove(second_list_remove)
@@ -610,8 +576,50 @@ def dijkstra(adj_list, start):
         intersections.append(key)
     return init_graph(adj_list, intersections).dijkstra_search(start, intersections)
 
-def get_route_coordinates(maze, start, end):
-    pass
+
+def get_route_coordinates(preds, start, end):
+    route_coords = []
+    temp1 = end
+    while preds[temp1] != start:
+        route_coords.append(temp1)
+        temp2 = preds[temp1]
+        if (temp1[0] == temp2[0]):
+            distance = temp1[1] - temp2[1]
+            if distance < 0: #moving right
+                for j in range (temp1[1], temp2[1]+1):
+                    route_coords.append((temp1[0], j))
+            else: #moving left
+                for j in range (temp1[1], temp2[1]-1, -1):
+                    route_coords.append((temp1[0], j))
+        else:
+            distance = temp1[0] - temp2[0]
+            if distance < 0: #moving up
+                for i in range (temp1[0], temp2[0]-1, -1):
+                    route_coords.append((i, temp1[1]))
+            else:
+                for i in range (temp1[0], temp2[0]+1):
+                    route_coords.append((i, temp1[1]))
+        temp1 = temp2
+    route_coords.append (start)
+    return route_coords
+
+START = (1,1)
+END = (5,5)
+
+
+maze = generate_city(10, 10)
+#intersections = find_intersections( maze)
+adj_list = adjacency_list(maze)
+#print(adj_list)
+add_start_end(adj_list, START, END)
+
+#print(adj_list)
+preds = dijkstra (adj_list, START)
+#print("preds: ". preds)
+route = get_route_coordinates(preds,START,END)
+#route.reverse()
+print('route:   ',route)
+
 
 def apply_safety_score(adj_list, safety_score):
     pass

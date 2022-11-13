@@ -234,9 +234,9 @@ intersections = []
 
 adj_list = {}
  
-def find_intersections(entry, exit, maze):
-    intersections.append(entry)
-    intersections.append(exit)
+def find_intersections(maze):
+    # intersections.append(entry)
+    # intersections.append(exit)
     for i in range(1, height-1):
         for j in range(1, width-1):
             count = l = r = u = d = 0
@@ -279,7 +279,7 @@ def adj_list_m(intersections, maze):
                 for y in range(0, len(intersections)):
                     if (check[0], j) == intersections[y]:
                         safety_data = {}
-                        safety_data['safety_score'] = 10
+                        safety_data['safety_score'] = 1.0
                         # print(((check[0], j), count, safety_data))
                         adj_list[check].append(((check[0], j), count, safety_data))
         count = 0
@@ -289,7 +289,7 @@ def adj_list_m(intersections, maze):
                 for y in range(0, len(intersections)):
                     if (check[0], j) == intersections[y]:
                         safety_data = {}
-                        safety_data['safety_score'] = 10
+                        safety_data['safety_score'] = 1.0
                         adj_list[check].append(((check[0], j), count, safety_data))
         count = 0
         for i in range (check[0]-1, 0, -1): #going up
@@ -298,7 +298,7 @@ def adj_list_m(intersections, maze):
                 for y in range(0, len(intersections)):
                     if (i, check[1]) == intersections[y]:
                         safety_data = {}
-                        safety_data['safety_score'] = 10
+                        safety_data['safety_score'] = 1.0
                         adj_list[check].append (((i, check[1]), count, safety_data))
         count = 0
         for i in range (check[0]+1, height): #going down
@@ -307,14 +307,14 @@ def adj_list_m(intersections, maze):
                 for y in range(0, len(intersections)):
                     if (i, check[1]) == intersections[y]:
                         safety_data = {}
-                        safety_data['safety_score'] = 10
+                        safety_data['safety_score'] = 1.0
                         adj_list[check].append (((i, check[1]), count, safety_data))
         
     return adj_list
  
-def adjacency_list(maze, start, end):
-    intersections = find_intersections(start, end, maze)
-    return adj_list_m(intersections, maze)
+
+
+
  
 
 
@@ -428,12 +428,7 @@ def init_graph(adj_list, intersections):
 
 
 
-def dijkstra(adj_list, start):
-    intersections = []
-    # intersections = adj_list.keys()
-    for key in adj_list.keys():
-        intersections.append(key)
-    return init_graph(adj_list, intersections).dijkstra_search(start, intersections)
+
 
 # def get_route_coordinates(maze, start, end):
 #     route_coords = []
@@ -464,9 +459,162 @@ def dijkstra(adj_list, start):
 #     route_coords.append (start)
 #     return route_coords
 
-# maze = generate_city(30, 30)
-# intersections = find_intersections((1, 1), (10, 10), maze)
+
+# START = (1,1)
+# END = (20,20)
+
+# maze = generate_city(40, 40)
+# intersections = find_intersections(START, END, maze)
 # print(adj_list_m(intersections, maze))
 # #print (dijkstra (adj_list_m(intersections, maze), intersections[0]))
+# print()
+# route = get_route_coordinates(maze,START,END)
+# route.reverse()
+# print('route:   ',route)
 
-# print(get_route_coordinates(generate_city(30,30),(1,1),(10,10)))
+
+
+### public functions
+
+
+def adjacency_list(maze):
+    intersections = find_intersections(maze)
+    return adj_list_m(intersections, maze)
+
+def add_start_end(adj_list, start, end):
+
+    added_start = False
+    finding_start = True
+    for first_node in adj_list:
+        if not finding_start:
+            break
+        for second_node, distance, safety_data in adj_list[first_node]:
+            if start == first_node or start == second_node:
+                finding_start = False
+                break
+            if first_node[0] < start[0] < second_node[0]:
+                first_list_remove = (second_node, distance, safety_data)
+                second_list_remove = (first_node, distance, safety_data)
+
+                d1 = start[0] - first_node[0]
+                d2 = second_node[0] - start[0]
+
+
+                finding_start = False
+                added_start = True
+                break
+            if first_node[1] < start[1] < second_node[1]:
+                first_list_remove = (second_node, distance, safety_data)
+                second_list_remove = (first_node, distance, safety_data)
+
+                d1 = start[1] - first_node[1]
+                d2 = second_node[1] - start[1]
+
+                finding_start = False
+                added_start = True
+                break
+
+    if added_start:
+        adj_list[first_node].remove(first_list_remove)
+        adj_list[second_node].remove(second_list_remove)
+
+        adj_list[start] = []
+
+        adj_list[first_node].append((start, d1, safety_data))
+        adj_list[start].append((first_node, d1, safety_data))
+
+        adj_list[second_node].append((start, d2, safety_data))
+        adj_list[start].append((second_node, d2, safety_data))
+
+    finding_end = True
+    added_end = False
+    for first_node in adj_list:
+        if not finding_end:
+            break
+        for second_node, distance, safety_data in adj_list[first_node]:
+            if end == first_node or end == second_node:
+                finding_end = False
+                break
+            if first_node[0] < end[0] < second_node[0]:
+                first_list_remove = (second_node, distance, safety_data)
+                second_list_remove = (first_node, distance, safety_data)
+
+                d1 = end[0] - first_node[0]
+                d2 = second_node[0] - end[0]
+
+                finding_end = False
+                added_end = True
+                break
+            if first_node[1] < end[1] < second_node[1]:
+                first_list_remove = (second_node, distance, safety_data)
+                second_list_remove = (first_node, distance, safety_data)
+
+                d1 = end[1] - first_node[1]
+                d2 = second_node[1] - end[1]
+
+                finding_end = False
+                added_end = True
+                break
+    if added_end:
+        adj_list[first_node].remove(first_list_remove)
+        adj_list[second_node].remove(second_list_remove)
+
+        adj_list[end] = []
+
+        adj_list[first_node].append((end, d1, safety_data))
+        adj_list[end].append((first_node, d1, safety_data))
+
+        adj_list[second_node].append((end, d2, safety_data))
+        adj_list[end].append((second_node, d2, safety_data))
+
+    return {'start': added_start, 'end': added_end}
+
+
+
+def remove_start_end(modification, adj_list, start, end):
+
+    if not modification['start']:
+        first_node = adj_list[start][0][0]
+        second_node = adj_list[start][1][0]
+
+        distance = adj_list[start][0][1] + adj_list[start][1][1]
+
+        safety_data = {}
+        safety_data['safety_score'] = adj_list[start][0][2]['safety_score'] + adj_list[start][1][2]['safety_score']
+
+        adj_list[first_node].append((second_node, distance, safety_data))
+        adj_list[second_node].append((first_node, distance, safety_data))
+
+
+    del adj_list['start']
+
+    if not modification['end']:
+        first_node = adj_list[end][0][0]
+        second_node = adj_list[end][1][0]
+
+        distance = adj_list[end][0][1] + adj_list[end][1][1]
+
+        safety_data = {}
+        safety_data['safety_score'] = adj_list[end][0][2]['safety_score'] + adj_list[end][1][2]['safety_score']
+
+        adj_list[first_node].append((second_node, distance, safety_data))
+        adj_list[second_node].append((first_node, distance, safety_data))
+    
+    del adj_list['end']
+
+
+
+def dijkstra(adj_list, start):
+    intersections = []
+    for key in adj_list.keys():
+        intersections.append(key)
+    return init_graph(adj_list, intersections).dijkstra_search(start, intersections)
+
+def get_route_coordinates(maze, start, end):
+    pass
+
+def apply_safety_score(adj_list, safety_score):
+    pass
+
+
+# REMINDER: change dijkstra to weight safety score as well

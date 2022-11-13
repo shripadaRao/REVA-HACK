@@ -5,24 +5,32 @@ from city_generation import generate_city
 
 
 # tile info
-tile_size = 50
+tile_size = 60
 TILE_STREET = 'STREET'
 TILE_ROAD = 'ROAD'
 TILE_START = 'START'
 TILE_END = 'END'
 
 # view related info
-view_topleft = [0, 0]
-view_size = [10 * tile_size, 10 * tile_size]
+view_topleft = (0, 0)
+view_size = (10 * tile_size, 10 * tile_size)
 movement_distance = 1 * tile_size
+view_rect = pygame.Rect(view_topleft[0], view_topleft[1], view_size[0], view_size[1])
 
 # screen dimensions
+menu_height = 100
 screen_width = view_size[0]
-screen_height = view_size[1]
+screen_height = view_size[1] + menu_height
+
+# review btn
+review_btn_size = (150, 50)
+review_btn_rect = pygame.Rect((view_size[0]-review_btn_size[0])//2, view_size[1]+(menu_height-review_btn_size[1])//2, review_btn_size[0], review_btn_size[1])
 
 # states info
 states = ['SELECTING START', 'SELECTING END', 'SELECTED']
 current_state = 0
+
+highlight_coords = [(2, 2), (2, 3), (2, 4)]
 
 
 city_height = int(input('City Height: '))
@@ -47,10 +55,28 @@ def paint_view(screen):
         screen.blit(resources.tiles['street'], (x, y))
 
       if (city[j][i] in [TILE_START, TILE_END]):
-        print('start or end')
         screen.blit(resources.tiles['pin'], (x, y))
-      
-  pygame.display.flip()
+
+def paint_menu(screen):
+  pygame.draw.rect(screen, [255, 255, 255], [0, view_size[1], view_size[0], menu_height])
+
+def paint_highlights(screen):
+  if not states[current_state] == 'SELECTED':
+    return
+  
+  for i, j in highlight_coords:
+
+    x = i * tile_size
+    y = j * tile_size
+
+    if (x + tile_size - 1 < view_topleft[0] or y + tile_size - 1 < view_topleft[1] or 
+      x >= view_topleft[0] + view_size[0] or  y >= view_topleft[1] + view_size[1]):
+      return
+
+    screen.blit(resources.tiles['highlight'], (x, y))
+
+def paint_review_btn(screen):
+  pygame.draw.rect(screen, (0, 0, 0), review_btn_rect)
 
 def main():
   screen = pygame.display.set_mode((screen_width, screen_height))
@@ -60,6 +86,10 @@ def main():
   while running:
 
     paint_view(screen)
+    paint_menu(screen)
+    paint_highlights(screen)
+    paint_review_btn(screen)
+    pygame.display.flip()
 
     events = pygame.event.get()
 
@@ -92,11 +122,9 @@ def main():
           if states[current_state] == 'SELECTING START':
             city[j][i] = TILE_START
             current_state += 1
-            print('start selected')
           elif states[current_state] == 'SELECTING END':
             city[j][i] = TILE_END
             current_state += 1
-            print('end selected')
 
 if __name__ == '__main__':
   main()

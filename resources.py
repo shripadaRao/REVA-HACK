@@ -26,6 +26,10 @@ def load_assets(tile_size):
 
   tiles['street'] = pygame.image.load('assets/green-tile.jpg')
 
+  tiles['highlight'] = pygame.Surface((100, 100))
+  tiles['highlight'].set_alpha(128)
+  tiles['highlight'].fill((255, 234, 0))
+
   change_tile_size(tile_size)
 
 def change_tile_size(new_tile_size):

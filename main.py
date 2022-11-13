@@ -2,6 +2,8 @@
 import pygame
 import resources
 from city_generation import generate_city
+import graph
+#from graph import adjacency_list, add_start_end, remove_start_end, dijkstra, get_route_coordinates, apply_safety_score
 
 
 pygame.font.init()
@@ -36,12 +38,15 @@ text_size = font.size("Finish Trip")
 states = ['SELECTING START', 'SELECTING END', 'SELECTED', 'REVIEWING']
 current_state = 0
 
-highlight_coords = [(2, 2), (2, 3), (2, 4)]
-
-
 city_height = int(input('City Height: '))
 city_width = int(input('City Width: '))
 city = generate_city(city_height, city_width)
+city_adj_list = graph.adjacency_list(city)
+
+modification = {}
+route_start = -1
+route_end = -1
+highlight_coords = []
 
 
 ### functions
@@ -150,15 +155,30 @@ def main():
               if states[current_state] == 'SELECTING START':
                 city[j][i] = TILE_START
                 current_state += 1
+                global route_start
+                route_start = (i, j)
+
               elif states[current_state] == 'SELECTING END':
                 city[j][i] = TILE_END
                 current_state += 1
-          
+                global route_end
+                route_end = (i, j)
+
+                global modification
+                modification = graph.add_start_end(city_adj_list, route_start, route_end)
+
+
           elif in_rect(x, y, menu_rect):
 
             if in_rect(x, y, review_btn_rect):
               if states[current_state] == 'SELECTED':
                 current_state += 1
+          
+        elif states[current_state] == 'REVIEWING':
+          pass
+
+
+
 
 if __name__ == '__main__':
   main()

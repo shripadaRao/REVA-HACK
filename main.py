@@ -19,6 +19,7 @@ view_rect = pygame.Rect(view_topleft[0], view_topleft[1], view_size[0], view_siz
 
 # screen dimensions
 menu_height = 100
+menu_rect = pygame.Rect(0, view_size[1], view_size[0], menu_height)
 screen_width = view_size[0]
 screen_height = view_size[1] + menu_height
 
@@ -58,7 +59,7 @@ def paint_view(screen):
         screen.blit(resources.tiles['pin'], (x, y))
 
 def paint_menu(screen):
-  pygame.draw.rect(screen, [255, 255, 255], [0, view_size[1], view_size[0], menu_height])
+  pygame.draw.rect(screen, [255, 255, 255], menu_rect)
 
 def paint_highlights(screen):
   if not states[current_state] == 'SELECTED':
@@ -77,6 +78,13 @@ def paint_highlights(screen):
 
 def paint_review_btn(screen):
   pygame.draw.rect(screen, (0, 0, 0), review_btn_rect)
+
+def in_rect(x, y, rect):
+  return (x >= rect.x and y >= rect.y and 
+          x < rect.x + rect.w and y < rect.y + rect.height)
+
+def ask_review():
+  pass
 
 def main():
   screen = pygame.display.set_mode((screen_width, screen_height))
@@ -113,18 +121,26 @@ def main():
             view_topleft[1] += movement_distance
       
       if event.type == pygame.MOUSEBUTTONUP:
-        x, y = pygame.mouse.get_pos()
-        city_x, city_y = x + view_topleft[0], y + view_topleft[1]
-        i, j = city_x//tile_size, city_y//tile_size
 
-        global current_state
-        if city[j][i] == TILE_ROAD:
-          if states[current_state] == 'SELECTING START':
-            city[j][i] = TILE_START
-            current_state += 1
-          elif states[current_state] == 'SELECTING END':
-            city[j][i] = TILE_END
-            current_state += 1
+        x, y = pygame.mouse.get_pos()
+
+        if in_rect(x, y, view_rect):
+          city_x, city_y = x + view_topleft[0], y + view_topleft[1]
+          i, j = city_x//tile_size, city_y//tile_size
+
+          global current_state
+          if city[j][i] == TILE_ROAD:
+            if states[current_state] == 'SELECTING START':
+              city[j][i] = TILE_START
+              current_state += 1
+            elif states[current_state] == 'SELECTING END':
+              city[j][i] = TILE_END
+              current_state += 1
+        
+        elif in_rect(x, y, menu_rect):
+
+          if in_rect(x, y, review_btn_rect):
+            ask_review()
 
 if __name__ == '__main__':
   main()

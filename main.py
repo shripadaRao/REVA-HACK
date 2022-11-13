@@ -16,8 +16,8 @@ TILE_START = 'START'
 TILE_END = 'END'
 
 # view related info
-view_topleft = (0, 0)
-view_size = (10 * tile_size, 10 * tile_size)
+view_topleft = [0, 0]
+view_size = [10 * tile_size, 10 * tile_size]
 movement_distance = 1 * tile_size
 view_rect = pygame.Rect(view_topleft[0], view_topleft[1], view_size[0], view_size[1])
 

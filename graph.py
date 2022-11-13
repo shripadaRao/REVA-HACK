@@ -603,22 +603,22 @@ def get_route_coordinates(preds, start, end):
     route_coords.append (start)
     return route_coords
 
-START = (1,1)
-END = (5,5)
+# START = (1,1)
+# END = (5,5)
 
 
-maze = generate_city(10, 10)
-#intersections = find_intersections( maze)
-adj_list = adjacency_list(maze)
-#print(adj_list)
-add_start_end(adj_list, START, END)
+# maze = generate_city(10, 10)
+# #intersections = find_intersections( maze)
+# adj_list = adjacency_list(maze)
+# #print(adj_list)
+# add_start_end(adj_list, START, END)
 
-#print(adj_list)
-preds = dijkstra (adj_list, START)
-#print("preds: ". preds)
-route = get_route_coordinates(preds,START,END)
-#route.reverse()
-print('route:   ',route)
+# #print(adj_list)
+# preds = dijkstra (adj_list, START)
+# #print("preds: ". preds)
+# route = get_route_coordinates(preds,START,END)
+# #route.reverse()
+# print('route:   ',route)
 
 
 def apply_safety_score(adj_list, safety_score):
